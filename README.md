@@ -14,3 +14,4 @@ The code depends on https://github.com/markus-nilsson/md-dmri.git and https://gi
 ### Reference
 If you use the resources of this repository, please include a reference to:  
 [G Vis, M Nilsson, C-F Westin, F Szczepankiewicz. Accuracy and precision in super-resolution MRI: Enabling spherical tensor diffusion encoding at ultra-high b-values and high resolution (2021), DOI: https://doi.org/10.1016/j.neuroimage.2021.118673](https://doi.org/10.1016/j.neuroimage.2021.118673)
+
