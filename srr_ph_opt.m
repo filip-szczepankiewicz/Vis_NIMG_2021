@@ -3,7 +3,7 @@ function opt = srr_ph_opt(opt)
 %
 % Specifies default options for phantom creation
 
-if (nargin < 1); opt.present = 1; end % not sure what this does
+if (nargin < 1); opt.present = 1; end 
 
 opt = msf_ensure_field(opt, 'psize', 108); % 2d phantom size in voxels
 opt = msf_ensure_field(opt, 'aspect', 3); % aspect ratio
