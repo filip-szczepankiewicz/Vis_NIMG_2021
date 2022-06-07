@@ -9,7 +9,9 @@ Geraline Vis<sup>1</sup>, Markus Nilsson<sup>1</sup>, Carl-Fredrik Westin<sup>2<
 This repository contains a framework for super-resolution reconstruction, i.e. reconstructing a high-resolution image from multiple low-resolution images. Examples are given for a numerical Shepp-logan phantom and phantom data acquired on a Siemens Prisma 3T.
 
 ### Dependencies
-The code depends on https://github.com/markus-nilsson/md-dmri.git and https://github.com/xiangruili/dicm2nii.git.
+The following Matlab tools are required to run the SRR framework:
+* https://github.com/markus-nilsson/md-dmri.git
+* https://github.com/xiangruili/dicm2nii.git
 
 ### Reference
 If you use the resources of this repository, please include a reference to:  
