@@ -6,23 +6,38 @@ if (nargin < 1), opt.present = 1; end
 lr_ind = []; 
 
 % search for lr index closest to pos
+% JJ: multiply z pixdim by qfac
 lr_ind_init = (lr_p.fovrot([1,3], [1,3]) \ (hr_pos - ...
                [lr_p.qoffset_x ; lr_p.qoffset_z])) ./ ...
-               [lr_p.pixdim_x; -lr_p.pixdim_z];              
+               [lr_p.pixdim_x; lr_p.qfac*lr_p.pixdim_z];              
 
 i_init = floor(lr_ind_init(1)) + 1;
 j_init = floor(lr_ind_init(2)) + 1;
 
+% JJ: This was commented out, because it works only for cases where XZ axes are
+% aligned with IJ axes
+
 % get coordinates of hr
-hr_pos_x = [hr_pos(1) + hr_p.pixdim_x/2, hr_pos(1) + hr_p.pixdim_x/2, ...
-               hr_pos(1) - hr_p.pixdim_x/2, hr_pos(1) - hr_p.pixdim_x/2];
-hr_pos_z = [hr_pos(2) + hr_p.pixdim_z/2, hr_pos(2) - hr_p.pixdim_z/2, ...
-               hr_pos(2) - hr_p.pixdim_z/2, hr_pos(2) + hr_p.pixdim_z/2];
+% hr_pos_x = [hr_pos(1) + hr_p.pixdim_x/2, hr_pos(1) + hr_p.pixdim_x/2, ...
+%                hr_pos(1) - hr_p.pixdim_x/2, hr_pos(1) - hr_p.pixdim_x/2];
+% hr_pos_z = [hr_pos(2) + hr_p.pixdim_z/2, hr_pos(2) - hr_p.pixdim_z/2, ...
+%                hr_pos(2) - hr_p.pixdim_z/2, hr_pos(2) + hr_p.pixdim_z/2];
+
+% JJ: This was added, it makes corner positions general to any XZ
+% orientation
+hr_cornerpos = [(hr_pos + hr_p.fovrot([1,3], [1,3]) * hr_p.cornervecs(1,:)') ...
+                (hr_pos + hr_p.fovrot([1,3], [1,3]) * hr_p.cornervecs(2,:)') ... 
+                (hr_pos + hr_p.fovrot([1,3], [1,3]) * hr_p.cornervecs(3,:)') ... 
+                (hr_pos + hr_p.fovrot([1,3], [1,3]) * hr_p.cornervecs(4,:)')];
+
+hr_pos_x = hr_cornerpos(1,:);
+hr_pos_z = hr_cornerpos(2,:);
+% JJ: end of modification
 
 hr_shape = polyshape(hr_pos_x, hr_pos_z, 'Simplify', true);
 
 % visualize shape
-% figure(1); clf; plot(hr_shape); hold on;
+% figure(1); clf; plot(hr_shape); daspect([1,1,1]); hold on;
 
 % create a list of possible voxel index combinations contributing
 i_vec = [i_init i_init-1 i_init+1 i_init-2 i_init+2];
@@ -46,8 +61,9 @@ while single(sum(fraction)) < 0.999999 && c < size(possible_indices,1)+1
     if (j < 1 || j > lr_p.size(2)); c = c+1; continue; end
 
     % calculate lr position from indices
+    % JJ: multiply z pixdim by qfac
     lr_pos = lr_p.fovrot([1,3], [1,3]) * ([(i-1);(j-1)] .* ...
-        [lr_p.pixdim_x ; -lr_p.pixdim_z])  + ...
+        [lr_p.pixdim_x ; lr_p.qfac*lr_p.pixdim_z])  + ...
         [lr_p.qoffset_x ; lr_p.qoffset_z];
 
     lr_cornerpos = [(lr_pos + lr_p.fovrot([1,3], [1,3]) * lr_p.cornervecs(1,:)') ...
