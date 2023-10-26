@@ -16,8 +16,9 @@ for i = 1:hr_p.size(1)
        hr_ind = sub2ind(hr_p.size, i, j);
 
        % get real world position of hr voxel
+       % JJ: multiply z pixdim by qfac
        hr_pos = hr_p.fovrot([1,3], [1,3]) * ...
-       ([(i-1);(j-1)] .* [hr_p.pixdim_x;-hr_p.pixdim_z]) + ...
+       ([(i-1);(j-1)] .* [hr_p.pixdim_x;hr_p.qfac*hr_p.pixdim_z]) + ...
        [hr_p.qoffset_x; hr_p.qoffset_z];
 
        % get lr indices and weights of overlap
@@ -42,6 +43,15 @@ function p = geometerics_from_header(h)
     
     b = h.quatern_b; c = h.quatern_c; d = h.quatern_d;
     a = sqrt(1.0-(b*b+c*c+d*d));
+    
+    % code added by JJ
+    if a<10e-6 
+        a=0; %set a to 0 if very small (due to imprecision)
+    end 
+    p.qfac = h.pixdim(1); % read qfac for proper Z axis 
+
+    % end JJ
+    
     p.fovrot = double(quat2rotm([a b c d]));
     
     p.pixdim_x = double(h.pixdim(2));
